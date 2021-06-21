@@ -6,7 +6,7 @@ import numpy as np
 
 times = [time.time()]
 print("loading...", end='')
-inputdata = skvideo.io.vread("../../Desktop/Videos/8_min_480.mp4", num_frames=120, outputdict={"-pix_fmt": "gray"})[:, :, :, 0]
+inputdata = skvideo.io.vread("./videos/8_min_480.mp4", num_frames=120, outputdict={"-pix_fmt": "gray"})[:, :, :, 0]
 print("finished.")
 times.append(time.time())
 
