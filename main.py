@@ -7,7 +7,7 @@ from scores import *
 
 def main(argv):
     inputfile = ''
-    frames = 15
+    frames = 180
     try:
         opts, args = getopt.getopt(argv, "hi:f:", ["ifile=", "frames="])
     except getopt.GetoptError:
@@ -21,7 +21,7 @@ def main(argv):
             inputfile = arg
         elif opt in ("-f", "--frames"):
             frames = arg
-    print(f'Input file: {inputfile}')
+    print(f'Input file: {inputfile}; frames: {frames}')
     if inputfile == '':
         print('main.py -i <inputfile> -f <frames=15>')
         sys.exit(2)
