@@ -11,11 +11,11 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hi:f:", ["ifile=", "frames="])
     except getopt.GetoptError:
-        print('test.py -i <inputfile> -f <frames=15>')
+        print('main.py -i <inputfile> -f <frames=15>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('test.py -i <inputfile> -f <frames=15>')
+            print('main.py -i <inputfile> -f <frames=15>')
             sys.exit()
         if opt in ("-i", "--ifile"):
             inputfile = arg
@@ -23,7 +23,7 @@ def main(argv):
             frames = arg
     print(f'Input file: {inputfile}')
     if inputfile == '':
-        print('test.py -i <inputfile> -f <frames=15>')
+        print('main.py -i <inputfile> -f <frames=15>')
         sys.exit(2)
     tests(inputfile, frames)
 
