@@ -21,8 +21,8 @@ def main(argv):
             inputfile = arg
         elif opt in ("-f", "--frames"):
             frames = arg
-    print(f'Input file: {inputfile}')
-    tests(inputfile, frames)
+        print(f'Input file: {inputfile}')
+        tests(inputfile, frames)
 
 
 if __name__ == "__main__":
