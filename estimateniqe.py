@@ -1,20 +1,13 @@
-import os
 import shutil
+import os
+
 import numpy as np
-import skimage.io
+import scipy.misc
+import scipy.io
 import scipy.ndimage
+import skimage.io
 import skvideo.measure
 import skvideo.utils
-
-
-
-# imresize lifted from scikit-video package
-# scikit-image documentation https://scikit-image.org/docs/stable/genindex.html
-# numpy to python http://mathesaurus.sourceforge.net/matlab-numpy.html
-# code in question https://github.com/utlive/niqe/blob/main/estimatemodelparam.m
-# os package
-# https://www.freecodecamp.org/news/python-list-files-in-a-directory-guide-listdir-vs-system-ls-explained-with-examples/
-# matlab : is 1-indexing + inclusive
 
 
 # from https://stackoverflow.com/questions/17190649/how-to-obtain-a-gaussian-filter-in-python
@@ -33,8 +26,28 @@ def matlab_style_gauss2D(shape=(7, 7), sigma=7 / 6):
     return h
 
 
-def estimate_model_param(folder_path, block_size_row=96, block_size_col=96,
-                         block_row_overlap=0, block_col_overlap=0, sharp_threshold=0.75):
+# computes mean instead of extracting features
+def mean_on_patches(img, patch_size):
+    h, w = img.shape
+    patch_size = np.int(patch_size)
+    patches = []
+    for j in range(0, h - patch_size + 1, patch_size):
+        for i in range(0, w - patch_size + 1, patch_size):
+            patch = img[j:j + patch_size, i:i + patch_size]
+            patches.append(patch)
+
+    patches = np.array(patches)
+
+    patch_mean = []
+    for p in patches:
+        patch_mean.append(np.mean(p))
+    patch_mean = np.array(patch_mean)
+
+    return patch_mean
+
+
+# implemented from https://github.com/utlive/niqe/blob/main/estimatemodelparam.m
+def estimate_model_param(folder_path, block_size_row=96, block_size_col=96, sharp_threshold=0.75):
     """Estimates model parameters for Naturalness Image Quality Evaluator. [#f1]_
 
         Input a folder of pristine images and save parameters to a mat file.
@@ -47,10 +60,6 @@ def estimate_model_param(folder_path, block_size_row=96, block_size_col=96,
             Height of the blocks in to which image is divided
         block_size_col : int
             Width of the blocks in to which image is divided
-        block_row_overlap : int
-            Amount of vertical overlap between blocks
-        block_col_overlap : int
-            Amount of horizontal overlap between blocks
         sharp_threshold : float
             The sharpness threshold level
 
@@ -63,15 +72,15 @@ def estimate_model_param(folder_path, block_size_row=96, block_size_col=96,
 
         References
         ----------
-        .. [#f1] Mittal, Anish, Rajiv Soundararajan, and Alan C. Bovik. "Making a 'completely blind' image quality analyzer." IEEE Signal Processing Letters 20.3 (2013): 209-212.
+        .. [#f1] Mittal, Anish, Rajiv Soundararajan, and Alan C. Bovik.
+        "Making a 'completely blind' image quality analyzer."
+        IEEE Signal Processing Letters 20.3 (2013): 209-212.
 
         """
-    # Example call
-    #
-    # [mu_prisparam cov_prisparam] = estimatemodelparam('pristine', 96, 96, 0, 0, 0.75);
 
     # ---------------------------------------------------------------
     # Find names of images in the folder
+    print("* Estimating NIQE parameters ----------")
     current = os.getcwd()
     os.chdir(folder_path)
     names = os.listdir(os.getcwd())
@@ -81,13 +90,15 @@ def estimate_model_param(folder_path, block_size_row=96, block_size_col=96,
     feat_num = 18
     # ---------------------------------------------------------------
     # Make the directory for storing the features
-    if os.path.isdir('local_risquee_prisfeatures'):
-        shutil.rmtree('local_risquee_prisfeatures')
-    os.mkdir('local_risquee_prisfeatures')
+    if os.path.isdir('local_features'):
+        shutil.rmtree('local_features')
+    os.mkdir('local_features')
     # ---------------------------------------------------------------
     # Compute pristine image features
-    for i in range(0, len(names)):
-        print(i)
+    print("* Compute -----")
+    print("index ", end='')
+    for i in range(0, 5):  # range(0, len(names)):
+        print(f"{i + 1}...", end='')
         im = skimage.io.imread(f'{folder_path}/{names[i]}', as_gray=True)
         row, col = im.shape
         block_row_num = row // block_size_row
@@ -95,58 +106,114 @@ def estimate_model_param(folder_path, block_size_row=96, block_size_col=96,
         im = im[:(block_row_num * block_size_row + 1), :(block_col_num * block_size_col + 1)]
         window = matlab_style_gauss2D()
         window = window / sum(sum(window))
-        scale_num = 2
-        # warning('off')
-        feat = np.array(0)
-        sharpness = 0
 
-        for scale in range(0, scale_num):
-            mu = scipy.ndimage.correlate(im, window, mode='nearest')
-            mu_sg = mu * mu
-            sigma = np.sqrt(abs(scipy.ndimage.correlate(im*im, window, mode='nearest') - mu_sg))
-            struct_dis = np.array(im - mu) / (sigma + 1)
-            feat_scale = skvideo.measure.extract_on_patches(struct_dis, 96)
-            feat_scale = np.reshape(feat_scale, (feat_num, feat_scale.shape[0]*feat_scale.shape[1]/feat_num))
-            print(feat_scale.shape)
-            # feat_scale = reshape(feat_scale, [feat_num, .size(feat_scale, 1) * size(feat_scale, 2) / feat_num]);
-            # feat_scale = feat_scale';
-            #
-            if scale == 0:
-                sharpness = np.array(np.mean(sigma))
-                print(sharpness)
-                # sharpness = blkproc(sigma, [blocksizerow, blocksizecol], [blockrowoverlap, blockcoloverlap],
-                #             @computemean);
-                # compute mean of every value in array A
-                # sharpness = sharpness(:);
-                pass
-            feat = np.append(feat, feat_scale)
-            print(feat.shape)
-            im = skvideo.utils.image.imresize(im, 0.5)
-            break
-        scipy.io.savemat(f'local_risquee_prisfeatures/prisfeatures_local{i}.mat', feat, sharpness)
-        break
+        mu = scipy.ndimage.correlate(im, window, mode='nearest')
+        mu_sg = mu * mu
+        sigma = np.sqrt(abs(scipy.ndimage.correlate(im * im, window, mode='nearest') - mu_sg))
+        struct_dis = np.array(im - mu) / (sigma + 1)
+        feat = skvideo.measure.extract_on_patches(struct_dis, 96)
+        x, y = feat.shape
+        feat = np.reshape(feat, (feat_num, int(x * y / feat_num))).transpose()
+        sharpness = mean_on_patches(sigma, 96)
+
+        mdic = {"feat": feat, "sharpness": sharpness}
+        scipy.io.savemat(f'local_features/local{i}.mat', mdic)
+    print("done.")
 
     # ----------------------------------------------
     # Load pristine image features
-    prisparam = []
+    print("* Load -----")
+    pris_param = 0
     current = os.getcwd()
-    os.chdir('local_risquee_prisfeatures')
+    os.chdir('local_features')
     names = os.listdir(os.getcwd())
     os.chdir(current)
+    print("index ", end='')
     for i in range(0, len(names)):
+        print(f"{i + 1}...", end='')
         # Load the features and select the only features
-        scipy.io.loadmat(f'local_risquee_prisfeatures/{names[i]}')
-        # IX = find(sharpness(:) > sh_th * max(sharpness(:)));
-        # feat = feat(IX,:);
-        prisparam = np.hstack(prisparam, feat)
-        break
+        data = scipy.io.loadmat(f'local_features/{names[i]}')
+        sharpness = data['sharpness']
+        feat = data['feat']
+        indices = (sharpness > (sharp_threshold * max(sharpness))).flatten()
+        feat = feat[indices, :]
+        if i == 0:
+            pris_param = feat
+        else:
+            pris_param = np.vstack((pris_param, feat))
+    print("done.")
 
     # ----------------------------------------------
     # Compute model parameters
-    mu_prisparam = np.nanmean(prisparam)
-    cov_prisparam = np.ma.cov(prisparam)
+    mu_prisparam = np.nanmean(pris_param)
+    cov_prisparam = np.ma.cov(pris_param)
 
     # ----------------------------------------------
     # Save features in the mat file
-    scipy.io.savemat('modelparameters_new.mat', mu_prisparam, cov_prisparam)
+    mdic = {"pop_mu": mu_prisparam, "pop_cov": cov_prisparam}
+    scipy.io.savemat('niqe_fitted_parameters.mat', mdic)
+    print("Done ----------------------------------")
     return mu_prisparam, cov_prisparam
+
+
+def fit_niqe(input_video_data, model_path):
+    """Computes Naturalness Image Quality Evaluator. [#f1]_
+
+    Input a video of any quality and get back its distance frame-by-frame
+    from naturalness.
+
+    Parameters
+    ----------
+    input_video_data : ndarray
+        Input video, ndarray of dimension (T, M, N, C), (T, M, N), (M, N, C), or (M, N),
+        where T is the number of frames, M is the height, N is width,
+        and C is number of channels. Here C is only allowed to be 1.
+    model_path : str
+        Path to model parameters, ie. the mat file
+
+    Returns
+    -------
+    niqe_array : ndarray
+        The niqe results, ndarray of dimension (T,), where T
+        is the number of frames
+
+    References
+    ----------
+    .. [#f1] Mittal, Anish, Rajiv Soundararajan, and Alan C. Bovik.
+    "Making a 'completely blind' image quality analyzer."
+    IEEE Signal Processing Letters 20.3 (2013): 209-212.
+
+    """
+    # cache
+    patch_size = 96
+
+    params = scipy.io.loadmat(model_path)
+    pop_mu = np.ravel(params["pop_mu"])
+    pop_cov = params["pop_cov"]
+
+    # load the training data
+    input_video_data = skvideo.utils.vshape(input_video_data)
+
+    T, M, N, C = input_video_data.shape
+
+    assert C == 1, "niqe called with videos containing %d channels. Please supply only the luminance channel" % (C,)
+    assert M > (
+                patch_size * 2 + 1), "niqe called with small frame size, " \
+                                     "requires > 192x192 resolution video using current training parameters"
+    assert N > (
+                patch_size * 2 + 1), "niqe called with small frame size, " \
+                                     "requires > 192x192 resolution video using current training parameters"
+
+    niqe_scores = np.zeros(T, dtype=np.float32)
+
+    for t in range(T):
+        feats = skvideo.measure.get_patches_test_features(input_video_data[t, :, :, 0], patch_size)
+        sample_mu = np.mean(feats, axis=0)
+        sample_cov = np.cov(feats.T)
+
+        X = sample_mu - pop_mu
+        cov_mat = ((pop_cov + sample_cov) / 2.0)
+        pinv_mat = scipy.linalg.pinv(cov_mat)
+        niqe_scores[t] = np.sqrt(np.dot(np.dot(X, pinv_mat), X))
+
+    return niqe_scores

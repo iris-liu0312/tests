@@ -1,4 +1,3 @@
 import estimateniqe
 
-
-estimateniqe.estimate_model_param('pristine')
+pop_mu, pop_cov = estimateniqe.estimate_model_param('pristine')
