@@ -6,26 +6,52 @@ from scores import *
 
 
 def main(argv):
-    inputfile = ''
+    h = """main.py
+    Input the video you want to analyze as well as some other options.
+    If no directory for training is specified, the default NIQE is used.
+    Only use either -d or -m, never both.
+    -h      help
+    -i      input video file to be analyzed 
+    
+    Optionals:
+    -f      frames to analyze, default 150
+    -t [vn] specifies the metrics to calculate. default vn
+            v = VIIDEO
+            n = NIQE
+    -d      directory for image database to train NIQE
+            or parameters mat file for NIQE
+    """
+    input_file = ''
     frames = 150
+    t = 'vn'
+    path = ''
+    model = ''
     try:
-        opts, args = getopt.getopt(argv, "hi:f:", ["ifile=", "frames="])
+        opts, args = getopt.getopt(argv, "hi:f:d:m:t:", ["help", "inputfile=", "frames=",
+                                                         "directory=", "tests="])
     except getopt.GetoptError:
-        print('main.py -i <inputfile> -f <frames=150>')
+        print(h)
         sys.exit(2)
     for opt, arg in opts:
-        if opt == '-h':
-            print('main.py -i <inputfile> -f <frames=150>')
+        if opt in ("-h", "--help"):
+            print(h)
             sys.exit()
-        if opt in ("-i", "--ifile"):
-            inputfile = arg
+        if opt in ("-i", "--inputfile"):
+            input_file = arg
         elif opt in ("-f", "--frames"):
             frames = arg
-    print(f'Input file: {inputfile}; frames: {frames}')
-    if inputfile == '':
-        print('main.py -i <inputfile> -f <frames=150>')
+        elif opt in ("-d", "--directory"):
+            path = arg
+        elif opt in ("-t", "--tests"):
+            t = arg
+    print(f'Input file: {input_file}; frames: {frames}; tests: {t}')
+    if input_file == '':
+        print(h)
         sys.exit(2)
-    tests(inputfile, frames)
+    if path:
+        fit_test(input_file, frames, path, t)
+    else:
+        test(input_file, frames, t)
 
 
 if __name__ == "__main__":
