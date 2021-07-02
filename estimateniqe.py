@@ -88,17 +88,16 @@ def estimate_model_param(folder_path, block_size_row=96, block_size_col=96, shar
 
     # Number of features: 18 features at each scale
     feat_num = 18
+
     # ---------------------------------------------------------------
     # Make the directory for storing the features
     if os.path.isdir('local_features'):
         shutil.rmtree('local_features')
     os.mkdir('local_features')
+
     # ---------------------------------------------------------------
     # Compute pristine image features
-    print("* Compute -----")
-    print("index ", end='')
-    for i in range(0, 5):  # range(0, len(names)):
-        print(f"{i + 1}...", end='')
+    for i in range(0, len(names)):
         im = skimage.io.imread(f'{folder_path}/{names[i]}', as_gray=True)
         row, col = im.shape
         block_row_num = row // block_size_row
@@ -118,42 +117,39 @@ def estimate_model_param(folder_path, block_size_row=96, block_size_col=96, shar
 
         mdic = {"feat": feat, "sharpness": sharpness}
         scipy.io.savemat(f'local_features/local{i}.mat', mdic)
-    print("done.")
 
     # ----------------------------------------------
     # Load pristine image features
-    print("* Load -----")
     pris_param = 0
     current = os.getcwd()
     os.chdir('local_features')
     names = os.listdir(os.getcwd())
     os.chdir(current)
-    print("index ", end='')
     for i in range(0, len(names)):
-        print(f"{i + 1}...", end='')
         # Load the features and select the only features
         data = scipy.io.loadmat(f'local_features/{names[i]}')
         sharpness = data['sharpness']
         feat = data['feat']
-        indices = (sharpness > (sharp_threshold * max(sharpness))).flatten()
-        feat = feat[indices, :]
+        threshold = sharp_threshold * np.amax(sharpness)
+        feat = feat[(sharpness > threshold).flatten(), :]
         if i == 0:
             pris_param = feat
         else:
             pris_param = np.vstack((pris_param, feat))
-    print("done.")
 
     # ----------------------------------------------
     # Compute model parameters
-    mu_prisparam = np.nanmean(pris_param)
-    cov_prisparam = np.ma.cov(pris_param)
+    mu = np.nanmean(pris_param)
+    cov = np.ma.cov(pris_param)
+    print(f"pris_param shape: {pris_param.shape}, cov shape: {cov.shape}")
 
     # ----------------------------------------------
-    # Save features in the mat file
-    mdic = {"pop_mu": mu_prisparam, "pop_cov": cov_prisparam}
+    # Save features in the mat file and clean up
+    mdic = {"pop_mu": mu, "pop_cov": cov}
     scipy.io.savemat('niqe_fitted_parameters.mat', mdic)
+    shutil.rmtree('local_features')
     print("Done ----------------------------------")
-    return mu_prisparam, cov_prisparam
+    return mu, cov
 
 
 def fit_niqe(input_video_data, model_path):
