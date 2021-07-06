@@ -27,9 +27,9 @@ def test(video, frames, t):
         times.append(time.time())
 
     print(f"---------------------------------------------\n",
-          f"NIQE:   {round(niqe, 5)} | {round(times[-1] - times[-2], 5)}s\n" * ("n" in t),
-          f"VIIDEO: {round(viideo, 5)} | {round(times[-2] - times[-3], 5)}s\n" * ("v" in t),
-          f"Total:  {round(time.time() - times[0], 5)}s\n" * ("n" in t) * ("v" in t),
+          f"NIQE:   {round(niqe, 5)} | {round(times[-1] - times[-2])}s\n" * ("n" in t),
+          f"VIIDEO: {round(viideo, 5)} | {round(times[-2] - times[-3])}s\n" * ("v" in t),
+          f"Total:  {round(time.time() - times[0])}s\n" * ("n" in t) * ("v" in t),
           f"frames: {inputdata.shape[0]}\n"
           f"---------------------------------------------")
 
@@ -60,8 +60,8 @@ def fit_test(video, frames, path, t):
         times.append(time.time())
 
     print(f"---------------------------------------------\n",
-          f"NIQE:   {niqe} | {round(times[-1] - times[-2],5)}s\n"*("n" in t),
-          f"VIIDEO: {round(viideo,5)} | {round(times[-2] - times[-3],5)}s\n"*("v" in t),
-          f"Total:  {round(time.time() - times[0],5)}s\n" * ("n" in t) * ("v" in t),
+          f"NIQE:   {niqe} | {round(times[-1] - times[-2]}s\n"*("n" in t),
+          f"VIIDEO: {round(viideo,5)} | {round(times[-2] - times[-3])}s\n"*("v" in t),
+          f"Total:  {round(time.time() - times[0])}s\n" * ("n" in t) * ("v" in t),
           f"frames: {inputdata.shape[0]}\n"
           f"---------------------------------------------")
