@@ -15,7 +15,7 @@ def main(argv):
     
     Optionals:
     -f      frames to analyze, default 150
-    -t [vn] specifies the metrics to calculate. default vn
+    -t [n] specifies the metrics to calculate. default n
             v = VIIDEO
             n = NIQE
     -d      directory for image database to train NIQE
