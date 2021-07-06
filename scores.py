@@ -29,7 +29,7 @@ def test(video, frames, t):
     print(f"---------------------------------------------\n",
           f"NIQE:   {round(niqe, 5)} | {round(times[-1] - times[-2], 5)}s\n" * ("n" in t),
           f"VIIDEO: {round(viideo, 5)} | {round(times[-2] - times[-3], 5)}s\n" * ("v" in t),
-          f"Total:  {round(time.time() - times[0], 5)}s\n",
+          f"Total:  {round(time.time() - times[0], 5)}s\n" * ("n" in t) * ("v" in t),
           f"frames: {inputdata.shape[0]}\n"
           f"---------------------------------------------")
 
@@ -56,12 +56,12 @@ def fit_test(video, frames, path, t):
 
     if t in ("n", "N"):
         print("* Calculate NIQE -----")
-        niqe = round(np.mean(estimateniqe.fit_niqe(inputdata, model)),5)
+        niqe = np.mean(estimateniqe.fit_niqe(inputdata, model))
         times.append(time.time())
 
     print(f"---------------------------------------------\n",
           f"NIQE:   {niqe} | {round(times[-1] - times[-2],5)}s\n"*("n" in t),
           f"VIIDEO: {round(viideo,5)} | {round(times[-2] - times[-3],5)}s\n"*("v" in t),
-          f"Total:  {round(time.time() - times[0],5)}s\n",
+          f"Total:  {round(time.time() - times[0],5)}s\n" * ("n" in t) * ("v" in t),
           f"frames: {inputdata.shape[0]}\n"
           f"---------------------------------------------")
