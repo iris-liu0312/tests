@@ -8,6 +8,8 @@ import estimateniqe
 
 
 def test(video, frames, t):
+    viideo = -1
+    niqe = -1
     times = [time.time()]
     print(f"* Load {video} -----")
     inputdata = skvideo.io.vread(video, num_frames=frames, outputdict={"-pix_fmt": "gray"})[:, :, :, 0]
@@ -25,14 +27,17 @@ def test(video, frames, t):
         times.append(time.time())
 
     print(f"---------------------------------------------\n",
-          f"NIQE:   {niqe} | {times[-1] - times[-2]}s\n"*("n" in t),
-          f"VIIDEO: {viideo} | {times[-2] - times[-3]}s\n"*("v" in t),
-          f"Total:  {time.time() - times[0]}s\n",
+          f"NIQE:   {round(niqe, 5)} | {round(times[-1] - times[-2], 5)}s\n" * ("n" in t),
+          f"VIIDEO: {round(viideo, 5)} | {round(times[-2] - times[-3], 5)}s\n" * ("v" in t),
+          f"Total:  {round(time.time() - times[0], 5)}s\n",
           f"frames: {inputdata.shape[0]}\n"
           f"---------------------------------------------")
 
 
 def fit_test(video, frames, path, t):
+    viideo = -1
+    niqe = -1
+
     model = path
     if os.path.isdir(path):
         estimateniqe.estimate_model_param(path)
@@ -44,19 +49,19 @@ def fit_test(video, frames, path, t):
     times.append(time.time())
 
     # test score
-    if "v" in t:
+    if t in ("v", "V"):
         print("* Calculate VIIDEO -----")
         viideo = skvideo.measure.viideo_score(inputdata)
         times.append(time.time())
 
-    if "n" in t:
+    if t in ("n", "N"):
         print("* Calculate NIQE -----")
-        niqe = np.mean(estimateniqe.fit_niqe(inputdata, model))
+        niqe = round(np.mean(estimateniqe.fit_niqe(inputdata, model)),5)
         times.append(time.time())
 
     print(f"---------------------------------------------\n",
-          f"NIQE:   {niqe} | {times[-1] - times[-2]}s\n"*("n" in t),
-          f"VIIDEO: {viideo} | {times[-2] - times[-3]}s\n"*("v" in t),
-          f"Total:  {time.time() - times[0]}s\n",
+          f"NIQE:   {niqe} | {round(times[-1] - times[-2],5)}s\n"*("n" in t),
+          f"VIIDEO: {round(viideo,5)} | {round(times[-2] - times[-3],5)}s\n"*("v" in t),
+          f"Total:  {round(time.time() - times[0],5)}s\n",
           f"frames: {inputdata.shape[0]}\n"
           f"---------------------------------------------")

@@ -138,11 +138,13 @@ def estimate_model_param(folder_path, block_size_row=96, block_size_col=96, shar
             pris_param = np.vstack((pris_param, feat))
 
     # ----------------------------------------------
+    # shrink pris_param to (36,18) via averaging
+    step = np.ceil(pris_param.shape[0] / 36).astype(int)
+    pris_param_s = np.multiply.reduceat(pris_param.astype(float), np.arange(0, pris_param.shape[0], step))
+
     # Compute model parameters
     mu = np.nanmean(pris_param)
-    cov = np.ma.cov(pris_param)
-    print(f"pris_param shape: {pris_param.shape}, cov shape: {cov.shape}")
-
+    cov = np.ma.cov(pris_param_s)
     # ----------------------------------------------
     # Save features in the mat file and clean up
     mdic = {"pop_mu": mu, "pop_cov": cov}
@@ -194,11 +196,11 @@ def fit_niqe(input_video_data, model_path):
 
     assert C == 1, "niqe called with videos containing %d channels. Please supply only the luminance channel" % (C,)
     assert M > (
-                patch_size * 2 + 1), "niqe called with small frame size, " \
-                                     "requires > 192x192 resolution video using current training parameters"
+            patch_size * 2 + 1), "niqe called with small frame size, " \
+                                 "requires > 192x192 resolution video using current training parameters"
     assert N > (
-                patch_size * 2 + 1), "niqe called with small frame size, " \
-                                     "requires > 192x192 resolution video using current training parameters"
+            patch_size * 2 + 1), "niqe called with small frame size, " \
+                                 "requires > 192x192 resolution video using current training parameters"
 
     niqe_scores = np.zeros(T, dtype=np.float32)
 
