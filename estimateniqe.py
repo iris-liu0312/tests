@@ -140,7 +140,8 @@ def estimate_model_param(folder_path, block_size_row=96, block_size_col=96, shar
     # ----------------------------------------------
     # shrink pris_param to (36,18) via averaging
     step = np.ceil(pris_param.shape[0] / 36).astype(int)
-    pris_param_s = np.multiply.reduceat(pris_param.astype(float), np.arange(0, pris_param.shape[0], step))
+    pris_param_s = np.add.reduceat(pris_param.astype(float), np.arange(0, pris_param.shape[0], step))
+    pris_param_s = np.divide(pris_param_s, 25)
 
     # Compute model parameters
     mu = np.nanmean(pris_param)
