@@ -23,7 +23,7 @@ def main(argv):
     """
     input_file = ''
     frames = 150
-    t = 'vn'
+    t = 'n'
     path = ''
     model = ''
     try:
