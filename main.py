@@ -25,7 +25,6 @@ def main(argv):
     frames = 150
     t = 'n'
     path = ''
-    model = ''
     try:
         opts, args = getopt.getopt(argv, "hi:f:d:m:t:", ["help", "inputfile=", "frames=",
                                                          "directory=", "tests="])
