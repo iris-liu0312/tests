@@ -9,7 +9,6 @@ def main(argv):
     h = """main.py
     Input the video you want to analyze as well as some other options.
     If no directory for training is specified, the default NIQE is used.
-    Only use either -d or -m, never both.
     -h      help
     -i      input video file to be analyzed 
     
