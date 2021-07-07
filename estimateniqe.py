@@ -80,7 +80,6 @@ def estimate_model_param(folder_path, block_size_row=96, block_size_col=96, shar
 
     # ---------------------------------------------------------------
     # Find names of images in the folder
-    print("* Estimating NIQE parameters ----------")
     current = os.getcwd()
     os.chdir(folder_path)
     names = os.listdir(os.getcwd())
@@ -151,7 +150,6 @@ def estimate_model_param(folder_path, block_size_row=96, block_size_col=96, shar
     mdic = {"pop_mu": mu, "pop_cov": cov}
     scipy.io.savemat('niqe_fitted_parameters.mat', mdic)
     shutil.rmtree('local_features')
-    print("Done ----------------------------------")
     return mu, cov
 
 
