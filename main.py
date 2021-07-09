@@ -42,7 +42,11 @@ def main(argv):
             path = arg
         elif opt in ("-t", "--tests"):
             t = arg
-    print(f'Input file: {input_file}; frames: {frames}; tests: {t}')
+    print(f'input file, {input_file}\n',
+          f'frames, {frames}\n',
+          f'tests, {t}')
+    if not path == '':
+        print(f'path, {path}')
     if input_file == '':
         print(h)
         sys.exit(2)
