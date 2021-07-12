@@ -28,12 +28,11 @@ def clean():
     cleaned = []
     for i in range(0, default.shape[0], 2):
         row = [-1] * 5  # time, TS-d, TS-f, MP4-d, MP4-f
-        if row[0] == -1:
-            row[0] = re.sub(r'.*_|\..*$', '', default[i][0])
-            row[1] = default[i + 1][3]
-            row[2] = fit[i + 1][3]
-            row[3] = default[i][3]
-            row[4] = fit[i][3]
+        row[0] = re.sub(r'.*_|\..*$', '', default[i][0])
+        row[1] = default[i + 1][3]
+        row[2] = fit[i + 1][3]
+        row[3] = default[i][3]
+        row[4] = fit[i][3]
         cleaned.append(row)
 
     with open('cleaned.csv', 'w') as csvfile:
