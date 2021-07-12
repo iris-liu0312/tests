@@ -69,6 +69,7 @@ def main(argv):
 
     # calculate in bulk
     if os.path.isdir(input_file):
+        print("finding files...")
         # find files
         mp4 = []
         ts = []
@@ -81,6 +82,7 @@ def main(argv):
         ts = sorted(ts)
 
         # run default NIQE in parallel
+        print("running default NIQE")
         mp4_d = parallel(scores.test, mp4, frames, '')
         ts_d = parallel(scores.test, ts, frames, '')
         with open('default.csv', 'w') as csvfile:
@@ -89,6 +91,7 @@ def main(argv):
             writer.writerows(ts_d)
 
         # run fitted NIQE in parallel
+        print("running fitted NIQE")
         if path == '':
             path = 'niqe_fitted_parameters.mat'
         mp4_f = parallel(scores.test, mp4, frames, path)
@@ -98,6 +101,7 @@ def main(argv):
             writer.writerows(mp4_f)
             writer.writerows(ts_f)
 
+        print("cleaning up")
         cleanup.clean()
 
         # remove default and fit
