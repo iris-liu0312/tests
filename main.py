@@ -120,9 +120,9 @@ def main(argv):
         print(h)
         sys.exit(2)
     res = scores.test(input_file, frames, path)
-    print('input file,frames,path,NIQE,time\n',
-          f'{os.path.basename(os.path.normpath(input_file))},{frames},'
-          f'{os.path.basename(os.path.normpath(path))},{res[0]},{res[1]}', end='')
+    print('input file, frames, path, NIQE, time')
+    print(f'{os.path.basename(os.path.normpath(input_file))}, {frames}, '
+          f'{os.path.basename(os.path.normpath(path))}, {res[0]}, {res[1]}')
 
 
 if __name__ == "__main__":
