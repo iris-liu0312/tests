@@ -21,22 +21,18 @@ default = np.char.strip(default)
 default = default[np.argsort(default[:, 0])]
 fit = np.char.strip(fit)
 fit = fit[np.argsort(fit[:, 0])]
+print(default)
 
 # clean
 cleaned = []
-row = [-1]*5  # time, TS-d, TS-f, MP4-d, MP4-f
-for i in range(0, default.shape[0]):
-    niqe_d = default[i]
-    niqe_f = fit[i]
+for i in range(0, default.shape[0], 2):
+    row = [-1] * 5  # time, TS-d, TS-f, MP4-d, MP4-f
     if row[0] == -1:
-        row[0] = niqe_d[0][5:13]
-    # ts files
-    if i % 2 == 0:
-        row[1] = niqe_d[3]
-        row[2] = niqe_f[3]
-    else:
-        row[3] = niqe_d[3]
-        row[4] = niqe_f[3]
+        row[0] = default[i][0][5:13]
+        row[1] = default[i+1][3]
+        row[2] = fit[i+1][3]
+        row[3] = default[i][3]
+        row[4] = fit[i][3]
     cleaned.append(row)
 
 with open('cleaned.csv', 'w') as csvfile:
