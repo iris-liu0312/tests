@@ -17,12 +17,12 @@ def clean():
         for row in reader:
             if row[0] != 'input file':
                 fit.append(row)
+
     # strip whitespace and sort with timestamp
     default = np.char.strip(default)
     default = default[np.argsort(default[:, 0])]
     fit = np.char.strip(fit)
     fit = fit[np.argsort(fit[:, 0])]
-    print(default)
 
     # clean
     cleaned = []
