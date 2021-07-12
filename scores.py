@@ -16,8 +16,7 @@ def test(video, frames):
     niqe = np.mean(skvideo.measure.niqe(inputdata))
     times.append(time.time())
 
-    print(f"NIQE, {round(niqe, 5)}\n"
-          f"time, {round(times[-1] - times[-2])}")
+    print(f"{round(niqe, 5)}, {round(times[-1] - times[-2])}")
 
 
 def fit_test(video, frames, path):

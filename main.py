@@ -38,9 +38,9 @@ def main(argv):
             frames = arg
         elif opt in ("-d", "--directory"):
             path = arg
-    print(f'input file, {os.path.basename(os.path.normpath(input_file))}\n',
-          f'frames, {frames}\n',
-          f'path, {os.path.basename(os.path.normpath(path))}')
+    print('input file, frames, path, NIQE, time\n',
+          f'{os.path.basename(os.path.normpath(input_file))}, {frames}, '
+          f'{os.path.basename(os.path.normpath(path))}, ', end='')
     if input_file == '':
         print(h)
         sys.exit(2)
