@@ -1,0 +1,6 @@
+echo "==============="
+echo "Sanity check!"
+echo "pwd: $(pwd)"
+echo "ls: $(ls $1)"
+echo "all together: $(ls $PWD/$1)"
+echo "==============="
