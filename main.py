@@ -112,6 +112,12 @@ def main(argv):
           f'path      | {os.path.basename(os.path.normpath(path))}\n',
           f'NIQE      | {res[0]}\n',
           f'time      | {res[1]}')
+    if path == 'default':
+        path = 'niqe_fitted_parameters.mat'
+        res = scores.test(input_file, frames, path)
+        print(f' path      | {os.path.basename(os.path.normpath(path))}\n',
+              f'NIQE      | {res[0]}\n',
+              f'time      | {res[1]}')
 
 
 if __name__ == "__main__":
