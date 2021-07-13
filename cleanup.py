@@ -1,4 +1,6 @@
 import csv
+from datetime import date
+
 import numpy as np
 import re
 
@@ -35,7 +37,8 @@ def clean():
         row[4] = fit[i][3]
         cleaned.append(row)
 
-    with open('cleaned.csv', 'w') as csvfile:
+    name = date.today().strftime("%m%d") + ".csv"
+    with open(name, 'w') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(['time', 'TS-d', 'TS-f', 'MP4-d', 'MP4-f'])
         writer.writerows(cleaned)
