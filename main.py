@@ -13,6 +13,8 @@ def parallel(f, files, frames, path):
     data = []
     with concurrent.futures.ProcessPoolExecutor() as executor:
         pool = executor.map(f, files, [frames] * len(files), [path] * len(files))
+        if path == '':
+            path = 'default'
         res = []
         for i in pool:
             res.append(i)
@@ -103,6 +105,8 @@ def main(argv):
 
     # calculate single file
     res = scores.test(input_file, frames, path)
+    if path == '':
+        path = 'default'
     print(f'input file | {os.path.basename(os.path.normpath(input_file))}\n',
           f'frames    | {frames}\n',
           f'path      | {os.path.basename(os.path.normpath(path))}\n',
