@@ -1,6 +1,5 @@
 #!/usr/bin/python
 import concurrent.futures
-import csv
 import getopt
 import os
 import sys
@@ -64,6 +63,11 @@ def main(argv):
         elif opt in ("-t", "--train"):
             t = arg
 
+    # exit with help
+    if input_file == '':
+        print(h)
+        sys.exit(2)
+
     # only train model
     if t:
         estimateniqe.estimate_model_param(input_file)
@@ -72,7 +76,6 @@ def main(argv):
     # calculate in bulk
     if os.path.isdir(input_file):
         print("finding files")
-        # find files
         mp4 = []
         ts = []
         for file in os.listdir(input_file):
@@ -83,44 +86,24 @@ def main(argv):
         mp4 = sorted(mp4)
         ts = sorted(ts)
 
-        # run default NIQE in parallel
         print("running default NIQE")
-        header = ['input file', 'frames', 'path', 'NIQE', 'time']
-        mp4_d = parallel(scores.test, mp4, frames, '')
-        ts_d = parallel(scores.test, ts, frames, '')
-        with open('default.csv', 'w') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(header)
-            writer.writerows(mp4_d)
-            writer.writerows(ts_d)
+        default = parallel(scores.test, mp4, frames, '')
+        default += parallel(scores.test, ts, frames, '')
 
-        # run fitted NIQE in parallel
         print("running fitted NIQE")
         if path == '':
             path = 'niqe_fitted_parameters.mat'
-        mp4_f = parallel(scores.test, mp4, frames, path)
-        ts_f = parallel(scores.test, ts, frames, path)
-        with open('fit.csv', 'w') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(header)
-            writer.writerows(mp4_f)
-            writer.writerows(ts_f)
+        fit = parallel(scores.test, mp4, frames, path)
+        fit += parallel(scores.test, ts, frames, path)
 
         print("cleaning up")
-        cleanup.clean()
-
-        # remove default and fit
-        os.remove('default.csv')
-        os.remove('fit.csv')
+        cleanup.clean(default, fit)
         print("done")
         return 1  # automate calculation exit code
 
     # calculate single file
-    if input_file == '':
-        print(h)
-        sys.exit(2)
     res = scores.test(input_file, frames, path)
-    print(f'input file| {os.path.basename(os.path.normpath(input_file))}\n',
+    print(f'input file | {os.path.basename(os.path.normpath(input_file))}\n',
           f'frames    | {frames}\n',
           f'path      | {os.path.basename(os.path.normpath(path))}\n',
           f'NIQE      | {res[0]}\n',
