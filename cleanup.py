@@ -31,8 +31,10 @@ def clean():
     for i in range(0, default.shape[0], 2):
         row = [-1] * 5  # time, TS-d, TS-f, MP4-d, MP4-f
         row[0] = re.sub(r'.*_|\..*$', '', default[i][0])
+        # ts data
         row[1] = default[i + 1][3]
         row[2] = fit[i + 1][3]
+        # mp4 data
         row[3] = default[i][3]
         row[4] = fit[i][3]
         cleaned.append(row)
