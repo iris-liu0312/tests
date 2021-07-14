@@ -1,15 +1,17 @@
 #!/bin/python
 import getopt
 import os
+import re
 import sys
 import urllib.request
+from xml.dom import minidom
 
 import main
 
 
 def dash_read(argv):
-    h = """hls_read.py
-    Reads HLS manifest and goes into the highest quality playlist.
+    h = """dash_read.py
+    Reads DASH manifest and goes into the highest quality playlist.
     Obtains last video segment available on the playlist.
     The video segment is saved to the current destination, and NIQE is calculated.
     -h    help
@@ -35,25 +37,23 @@ def dash_read(argv):
         sys.exit(2)
 
     # extract home-url
-    # home = url.replace(os.path.basename(url), '')
-    # manifest = urllib.request.urlopen(url)
-    # found = False
-    # for line in manifest:
-    #     decoded_line = line.decode("utf-8")
-    #     if found:
-    #         manifest = home+decoded_line
-    #         break
-    #     if "STREAM-INF" in decoded_line:
-    #         found = True
-    # HTTPResponse object not reversible, will take some time to run through the whole file
-    # playlist = urllib.request.urlopen(manifest)
-    # decoded_line = ''
-    # for line in playlist:
-    #     decoded_line = line.decode("utf-8")
-    #     pass
-    # ts = home+decoded_line.rstrip()
-    # destination = (os.getcwd()+'/'+decoded_line).replace("\r\n", '')
-    # urllib.request.urlretrieve(ts, destination)
+    home = url.replace(os.path.basename(url), '')
+    manifest = minidom.parse(urllib.request.urlopen(url))
+    adaptation = manifest.getElementsByTagName('AdaptationSet')[0]
+    # segment template
+    segment = adaptation.getElementsByTagName('SegmentTemplate')[0]
+    media = segment.attributes['media'].value
+    num = segment.attributes['startNumber'].value
+    # highest resolution
+    representation = adaptation.getElementsByTagName('Representation')[0]
+    rep_id = representation.attributes['id'].value
+    # obtain media name
+    media = re.sub('\$.*\$/', rep_id + '/', media)
+    media = re.sub('\$.*\$', num, media)
+    m4s = home + media
+
+    # destination = os.getcwd() + '/' + media
+    # urllib.request.urlretrieve(m4s, destination)
     # main.main(["-i", destination])
 
 
