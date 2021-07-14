@@ -36,22 +36,19 @@ def main(argv):
             or directory to train NIQE model (add -t 1 option)
     
     Optionals:
-    -f 150  frames to analyze, default 150;
-            note that frames = 0 analyzes the entire file
+    -f 150  frames to analyze, default 150
     -d      parameters mat file for NIQE
     -t 0    whether input is training directory, default 0 (false)
             if 1 (true), all other options are ignored
-    -s ...  dimensions of the video file. default is 1920x1080.
     """
     # obtain arguments
     input_file = ''
     frames = 150
     path = ''
     t = 0
-    s = (1920, 1080)
     try:
-        opts, args = getopt.getopt(argv, "hi:f:d:t:s:", ["help", "inputfile=", "frames=",
-                                                       "directory=", "train=", "size="])
+        opts, args = getopt.getopt(argv, "hi:f:d:t:", ["help", "inputfile=", "frames=",
+                                                       "directory=", "train="])
     except getopt.GetoptError:
         print(h)
         sys.exit(2)
@@ -67,9 +64,6 @@ def main(argv):
             path = arg
         elif opt in ("-t", "--train"):
             t = arg
-        elif opt in ("-s", "--size"):
-            s = arg
-            s = str.split(s, 'x')
 
     # exit with help
     if input_file == '':
@@ -110,8 +104,7 @@ def main(argv):
         return 1  # automate calculation exit code
 
     # calculate single file
-
-    res = scores.test(input_file, frames, path, s)
+    res = scores.test(input_file, frames, path)
     if path == '':
         path = 'default'
     print(f'input file | {os.path.basename(os.path.normpath(input_file))}\n',
@@ -121,7 +114,7 @@ def main(argv):
           f'time      | {res[1]}')
     if path == 'default':
         path = 'niqe_fitted_parameters.mat'
-        res = scores.test(input_file, frames, path, s)
+        res = scores.test(input_file, frames, path)
         print(f' path      | {os.path.basename(os.path.normpath(path))}\n',
               f'NIQE      | {res[0]}\n',
               f'time      | {res[1]}')

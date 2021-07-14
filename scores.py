@@ -6,10 +6,9 @@ import skvideo.measure
 import estimateniqe
 
 
-def test(video, frames, path, dimension=(1920, 1080)):
-    width, height = dimension
+def test(video, frames, path):
     times = [time.time()]
-    inputdata = skvideo.io.vread(video, height=height, width=width, num_frames=frames, outputdict={"-pix_fmt": "gray"})[:, :, :, 0]
+    inputdata = skvideo.io.vread(video, num_frames=frames, as_grey=True)
     times.append(time.time())
 
     # test score
