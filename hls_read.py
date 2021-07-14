@@ -40,7 +40,6 @@ def hls_read(argv):
     found = False
     for line in manifest:
         decoded_line = line.decode("utf-8")
-        print(decoded_line)
         if found:
             manifest = home+decoded_line
             break
@@ -53,7 +52,6 @@ def hls_read(argv):
         decoded_line = line.decode("utf-8")
         pass
     ts = home+decoded_line.rstrip()
-    print(ts)
     destination = (os.getcwd()+'/'+decoded_line).replace("\r\n", '')
     urllib.request.urlretrieve(ts, destination)
     main.main(["-i", destination, "-s", '1280x720'])
