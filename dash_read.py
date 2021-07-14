@@ -41,20 +41,18 @@ def dash_read(argv):
     manifest = minidom.parse(urllib.request.urlopen(url))
     adaptation = manifest.getElementsByTagName('AdaptationSet')[0]
     # segment template
-    segment = adaptation.getElementsByTagName('SegmentTemplate')[0]
-    media = segment.attributes['media'].value
-    num = segment.attributes['startNumber'].value
-    # highest resolution
-    representation = adaptation.getElementsByTagName('Representation')[0]
-    rep_id = representation.attributes['id'].value
+    rep = adaptation.getElementsByTagName('Representation')[0]
+    template = rep.getElementsByTagName('SegmentTemplate')[0]
+    media = template.attributes['media'].value
+    time = int(template.getElementsByTagName('S')[0].attributes['t'].value)+360360
     # obtain media name
-    media = re.sub('\$.*\$/', rep_id + '/', media)
-    media = re.sub('\$.*\$', num, media)
+    media = re.sub('\$.*\$', str(time), media)
+    print(media)
     m4s = home + media
 
-    # destination = os.getcwd() + '/' + media
-    # urllib.request.urlretrieve(m4s, destination)
-    # main.main(["-i", destination])
+    destination = os.getcwd() + '/' + 'dash.mp4'
+    urllib.request.urlretrieve(m4s, destination)
+    main.main(["-i", destination, "-s", "1280x720"])
 
 
 if __name__ == "__main__":
