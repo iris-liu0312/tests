@@ -44,13 +44,12 @@ def dash_read(argv):
     rep = adaptation.getElementsByTagName('Representation')[0]
     template = rep.getElementsByTagName('SegmentTemplate')[0]
     media = template.attributes['media'].value
-    time = int(template.getElementsByTagName('S')[0].attributes['t'].value)+360360
+    time = str(int(template.getElementsByTagName('S')[0].attributes['t'].value)+360360)
     # obtain media name
-    media = re.sub('\$.*\$', str(time), media)
-    print(media)
+    media = re.sub('\$.*\$', time, media)
     m4s = home + media
 
-    destination = os.getcwd() + '/' + 'dash.mp4'
+    destination = os.getcwd() + '/' + time + '.mp4'
     urllib.request.urlretrieve(m4s, destination)
     main.main(["-i", destination, "-s", "1280x720"])
 
