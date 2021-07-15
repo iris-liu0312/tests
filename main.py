@@ -43,7 +43,7 @@ def main(argv):
     """
     # obtain arguments
     input_file = ''
-    frames = 150
+    frames = 60
     path = ''
     t = 0
     try:
