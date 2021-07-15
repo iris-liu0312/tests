@@ -1,5 +1,5 @@
 import csv
-from datetime import date
+from datetime import datetime
 
 import numpy as np
 import re
@@ -26,7 +26,7 @@ def clean(default, fit):
         data.append(row)
 
     # write to file
-    name = date.today().strftime("%m%d_%T") + ".csv"
+    name = datetime.now().strftime("%m%d_%T") + ".csv"
     with open(name, 'w') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(['time', 'TS-d', 'TS-f', 'MP4-d', 'MP4-f'])
