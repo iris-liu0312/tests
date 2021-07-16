@@ -99,7 +99,7 @@ def main(argv):
         fit += parallel(scores.test, ts, frames, path)
 
         print("cleaning up")
-        cleanup.clean(default, fit)
+        cleanup.clean(default, fit, input_file)
         print("done")
         return 1  # automate calculation exit code
 
