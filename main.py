@@ -107,7 +107,7 @@ def main(argv):
         fit += parallel(ts, frames, path)
 
         print("cleaning up")
-        cleanup.clean(default, fit, input_file)
+        cleanup.clean(default, fit, os.path.basename(os.path.normpath(input_file)))
         print("done")
         return 1  # automate calculation exit code
 
