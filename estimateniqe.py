@@ -48,35 +48,25 @@ def mean_on_patches(img, patch_size):
 
 # implemented from https://github.com/utlive/niqe/blob/main/estimatemodelparam.m
 def estimate_model_param(folder_path, block_size_row=96, block_size_col=96, sharp_threshold=0.75):
-    """Estimates model parameters for Naturalness Image Quality Evaluator. [#f1]_
+    """
+    Estimates model parameters for Naturalness Image Quality Evaluator. [#f1]_
 
-        Input a folder of pristine images and save parameters to a mat file.
+    Input a folder of pristine images and save parameters to a mat file.
 
-        Parameters
-        ----------
-        folder_path : str
-            Folder containing the pristine images.
-        block_size_row : int
-            Height of the blocks in to which image is divided
-        block_size_col : int
-            Width of the blocks in to which image is divided
-        sharp_threshold : float
-            The sharpness threshold level
+    :param folder_path: folder containing the pristine images.
+    :param block_size_row: height of the blocks in to which image is divided
+    :param block_size_col: width of the blocks in to which image is divided
+    :param sharp_threshold: the sharpness threshold level
 
-        Returns
-        -------
-        mu_prisparam : float
-            mean of multivariate Gaussian model
-        cov_prisparam : float
-            covariance of multivariate Gaussian model
+    :return: mu_prisparam, mean of multivariate Gaussian model;
+             cov_prisparam, covariance of multivariate Gaussian model
 
-        References
-        ----------
-        .. [#f1] Mittal, Anish, Rajiv Soundararajan, and Alan C. Bovik.
-        "Making a 'completely blind' image quality analyzer."
-        IEEE Signal Processing Letters 20.3 (2013): 209-212.
-
-        """
+    Reference
+    -----
+    .. [#f1] Mittal, Anish, Rajiv Soundararajan, and Alan C. Bovik.
+    "Making a 'completely blind' image quality analyzer."
+    IEEE Signal Processing Letters 20.3 (2013): 209-212.
+    """
 
     # ---------------------------------------------------------------
     # Find names of images in the folder

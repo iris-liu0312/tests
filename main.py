@@ -9,10 +9,18 @@ import cleanup
 import estimateniqe
 
 
-def parallel(f, files, frames, path):
+def parallel(files, frames, path):
+    """
+    Runs default and fitted NIQE model on multiple files in parallel
+
+    :param files: array of file names
+    :param frames: frames to analyze, default 60
+    :param path: parameters mat file for NIQE
+    :return: array of file names with mat file path and results
+    """
     data = []
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        pool = executor.map(f, files, [frames] * len(files), [path] * len(files))
+        pool = executor.map(scores.test, files, [frames] * len(files), [path] * len(files))
         if path == '':
             path = 'default'
         res = []
@@ -36,7 +44,7 @@ def main(argv):
             or directory to train NIQE model (add -t 1 option)
     
     Optionals:
-    -f 150  frames to analyze, default 150
+    -f 150  frames to analyze, default 60
     -d      parameters mat file for NIQE
     -t 0    whether input is training directory, default 0 (false)
             if 1 (true), all other options are ignored
@@ -89,14 +97,14 @@ def main(argv):
         ts = sorted(ts)
 
         print("running default NIQE")
-        default = parallel(scores.test, mp4, frames, '')
-        default += parallel(scores.test, ts, frames, '')
+        default = parallel(mp4, frames, '')
+        default += parallel(ts, frames, '')
 
         print("running fitted NIQE")
         if path == '':
             path = 'niqe_fitted_parameters.mat'
-        fit = parallel(scores.test, mp4, frames, path)
-        fit += parallel(scores.test, ts, frames, path)
+        fit = parallel(mp4, frames, path)
+        fit += parallel(ts, frames, path)
 
         print("cleaning up")
         cleanup.clean(default, fit, input_file)

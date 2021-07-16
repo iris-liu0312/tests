@@ -5,6 +5,13 @@ import re
 
 
 def clean(default, fit, input_file):
+    """
+    Rearranges data into a csv file
+
+    :param default: default NIQE calculations array
+    :param fit: fitted NIQE calculations array
+    :param input_file: file directory
+    """
     # sort with timestamp
     default = np.array(default)
     fit = np.array(fit)
