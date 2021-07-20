@@ -33,7 +33,11 @@ def clean(default, fit, input_file):
 
     # write to file
     name = f"{input_file}.csv"
+    if "pkg" in input_file:
+        headers = ['time', 'HLS-d', 'HLS-f', 'DASH-d', 'DASH-f']
+    else:
+        headers = ['time', 'TS-d', 'TS-f', 'MP4-d', 'MP4-f']
     with open(name, 'w') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['time', 'TS-d', 'TS-f', 'MP4-d', 'MP4-f'])
+        writer.writerow(headers)
         writer.writerows(data)
