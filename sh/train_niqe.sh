@@ -1,10 +1,13 @@
 #!/bin/bash
 # extract i-frames
-echo "extracting i-frames from today's ts files..."
+echo 'extracting frames...'
 for ts_file in $1/*.ts
 do
-  bash sh/iframe.sh $ts_file ny1/ts_iframes &
+  bash sh/iframe.sh $ts_file $2
 done
 wait
-# train with dummy file as input to just train new model
-time py tests/main.py -d ny1/ts_iframes/ -i dummy.ts
+echo 'total files now:'
+ls $2 | wc -l
+# train
+echo 'training...'
+time python3 main.py -i $2 -t 1
