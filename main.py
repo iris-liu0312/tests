@@ -44,19 +44,21 @@ def main(argv):
             or directory to train NIQE model (add -t 1 option)
     
     Optionals:
-    -f 150  frames to analyze, default 60
+    -f 60  frames to analyze, default 60
     -d      parameters mat file for NIQE
     -t 0    whether input is training directory, default 0 (false)
             if 1 (true), all other options are ignored
+    -v      verbose output, i.e. prints which step the program is on
     """
     # obtain arguments
     input_file = ''
     frames = 60
     path = ''
     t = 0
+    v = 0
     try:
-        opts, args = getopt.getopt(argv, "hi:f:d:t:", ["help", "inputfile=", "frames=",
-                                                       "directory=", "train="])
+        opts, args = getopt.getopt(argv, "hi:f:d:t:v", ["help", "inputfile=", "frames=",
+                                                        "directory=", "train=", "verbose"])
     except getopt.GetoptError:
         print(h)
         sys.exit(2)
@@ -72,6 +74,8 @@ def main(argv):
             path = arg
         elif opt in ("-t", "--train"):
             t = arg
+        elif opt in ("-v", "--verbose"):
+            v = 1
 
     # exit with help
     if input_file == '':
@@ -85,7 +89,8 @@ def main(argv):
 
     # calculate in bulk
     if os.path.isdir(input_file):
-        print("finding files")
+        if v:
+            print("finding files")
         mp4 = []
         ts = []
         for file in os.listdir(input_file):
@@ -96,19 +101,23 @@ def main(argv):
         mp4 = sorted(mp4)
         ts = sorted(ts)
 
-        print("running default NIQE")
+        if v:
+            print("running default NIQE")
         default = parallel(mp4, frames, '')
         default += parallel(ts, frames, '')
 
-        print("running fitted NIQE")
+        if v:
+            print("running fitted NIQE")
         if path == '':
             path = 'niqe_fitted_parameters.mat'
         fit = parallel(mp4, frames, path)
         fit += parallel(ts, frames, path)
 
-        print("cleaning up")
+        if v:
+            print("cleaning up")
         cleanup.clean(default, fit, os.path.basename(os.path.normpath(input_file)))
-        print("done")
+        if v:
+            print("done")
         return 1  # automate calculation exit code
 
     # calculate single file
