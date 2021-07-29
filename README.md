@@ -20,6 +20,11 @@ Optionals:
 -v      verbose output, i.e. prints which step the program is on
 ```
 
+### Training a model
+Use `bash sh/train_niqe.sh {ts_file_directory} {train_directory}` to extract frames into `train_directory` and train a model.
+
+Use `bash sh/iframe.sh {ts_file} {train_directory}` to extract frames from a single file.
+
 ### Sample calls
 - `python main.py -i video.mp4 -f 15`
 - `python main.py -i video_directory -d niqe.mat -v`
