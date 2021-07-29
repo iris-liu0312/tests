@@ -17,11 +17,12 @@ Optionals:
 -d      parameters mat file for NIQE
 -t 0    whether input is training directory, default 0 (false)
         if 1 (true), all other options are ignored
+-v      verbose output, i.e. prints which step the program is on
 ```
 
 ### Sample calls
 - `python main.py -i video.mp4 -f 15`
-- `python main.py -i video_directory (-d niqe.mat)`
+- `python main.py -i video_directory -d niqe.mat -v`
 - `python main.py -i train_directory -t 1`
 
 ## Issues
