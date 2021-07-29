@@ -122,14 +122,12 @@ def main(argv):
 
     # calculate single file
     res = scores.test(input_file, frames, '')
-    if path == '':
-        path = 'default'
     print(f'input file | {os.path.basename(os.path.normpath(input_file))}\n',
           f'frames    | {frames}\n',
-          f'path      | {os.path.basename(os.path.normpath(path))}\n',
+          f'path      | default\n',
           f'NIQE      | {res[0]}\n',
           f'time      | {res[1]}')
-    if path == 'default':
+    if path == '':
         path = 'niqe_fitted_parameters.mat'
     res = scores.test(input_file, frames, path)
     print(f' path      | {os.path.basename(os.path.normpath(path))}\n',
